@@ -8,4 +8,10 @@ defmodule IexposApiWeb.Router do
   scope "/api", IexposApiWeb do
     pipe_through :api
   end
+
+  scope "/api/v1/stores/customers", IexposApiWeb.V1.Stores.Customers do
+    pipe_through :api
+
+    post "/registration/create", StoreController, :create
+  end
 end

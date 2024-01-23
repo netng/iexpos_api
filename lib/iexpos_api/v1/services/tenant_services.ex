@@ -1,4 +1,4 @@
-defmodule IexposApi.V1.TenantModules.TenantActions do
+defmodule IexposApi.V1.Services.TenantServices do
   @moduledoc """
   Utilities that help with managing tenant's prefixed databases.
   """
@@ -8,7 +8,7 @@ defmodule IexposApi.V1.TenantModules.TenantActions do
   @migrations_folder "tenant_migrations"
 
   def get_prefix_for_tenant(tenant) do
-    "tenant_#{String.downcase(tenant.code)}"
+    "tenant_#{String.downcase(tenant)}"
   end
 
   def create_tenant_database_schema(tenant) do
@@ -61,11 +61,22 @@ defmodule IexposApi.V1.TenantModules.TenantActions do
     options = Keyword.put(options, :all, true)
     repo = IexposApi.Repo
 
-    Ecto.Migrator.run(
-      repo,
-      tenant_migrations_path(repo),
-      :up,
-      options
-    )
+    {status, versions} =
+      handle_database_exceptions(fn ->
+        Ecto.Migrator.run(
+          repo,
+          tenant_migrations_path(repo),
+          :up,
+          options
+        )
+      end)
+
+      {status, versions}
+  end
+
+  defp handle_database_exceptions(fun) do
+    {:ok, fun.()}
+  rescue
+    e in Postgrex.Error -> {:error, Postgrex.Error.message(e)}
   end
 end
