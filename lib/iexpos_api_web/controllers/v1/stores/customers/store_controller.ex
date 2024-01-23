@@ -8,6 +8,7 @@ defmodule IexposApiWeb.V1.Stores.Customers.StoreController do
 
   def create(conn, %{"store" => store_params}) do
     with {:ok, %Store{} = store} <- Stores.create_store(store_params) do
+      # TODO: create user_accounts
       conn
       |> put_status(:ok)
       |> render(:store, %{store: store})

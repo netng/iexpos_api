@@ -61,22 +61,12 @@ defmodule IexposApi.V1.Services.TenantServices do
     options = Keyword.put(options, :all, true)
     repo = IexposApi.Repo
 
-    {status, versions} =
-      handle_database_exceptions(fn ->
-        Ecto.Migrator.run(
-          repo,
-          tenant_migrations_path(repo),
-          :up,
-          options
-        )
-      end)
+    Ecto.Migrator.run(
+      repo,
+      tenant_migrations_path(repo),
+      :up,
+      options
+    )
 
-      {status, versions}
-  end
-
-  defp handle_database_exceptions(fun) do
-    {:ok, fun.()}
-  rescue
-    e in Postgrex.Error -> {:error, Postgrex.Error.message(e)}
   end
 end
