@@ -12,6 +12,6 @@ defmodule IexposApiWeb.Router do
   scope "/api/v1/stores/customers", IexposApiWeb.V1.Stores.Customers do
     pipe_through :api
 
-    post "/registration/create", StoreController, :create
+    post "/sign-up", StoreController, :create
   end
 end

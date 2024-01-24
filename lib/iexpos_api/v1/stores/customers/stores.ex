@@ -5,9 +5,13 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
 
   import Ecto.Query, warn: false
 
-  alias IexposApi.Repo
-  alias IexposApi.V1.Stores.Customers.Store
+  alias IexposApi.V1.Stores.Customers.{
+    Account, Accounts,
+    Store,
+    User, Users
+  }
 
+  alias IexposApi.Repo
   alias IexposApi.V1.Helper.TenantActions
 
   @doc """
@@ -22,27 +26,45 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
       iex> create_store(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
   """
-  def create_store(attrs \\ %{}) do
-    changeset = Store.changeset(%Store{}, attrs)
+  def create_store(store, account, user) do
+    store_changeset = Store.changeset(%Store{}, store)
 
-    if changeset.valid? do
-      codename = Ecto.Changeset.get_field(changeset, :codename)
+    if store_changeset.valid? do
+      codename = Ecto.Changeset.get_field(store_changeset, :codename)
+      tenant = "tenant_" <> String.downcase(codename)
 
       Ecto.Multi.new()
       |> Ecto.Multi.run(:create_tenant, fn _, _ ->
-        TenantActions.create_tenant_database_schema(codename)
+          TenantActions.create_tenant_database_schema(codename)
       end)
-      |> Ecto.Multi.insert(:insert_store, changeset)
+      |> Ecto.Multi.insert(:insert_store, store_changeset)
+      |> Ecto.Multi.run(:insert_and_build_user_account, fn _,_ ->
+          insert_and_build_user_account(account, user, tenant)
+      end)
       |> Repo.transaction()
       |> case do
         {:ok, %{create_tenant: _codename, insert_store: changeset}} ->
           {:ok, changeset}
+
         {:error, :insert_store, changeset, _} ->
+          {:error, changeset}
+
+        {:error, :insert_account, changeset, _} ->
+          {:error, changeset}
+
+        {:error, :insert_and_build_user_account, changeset, _} ->
           {:error, changeset}
       end
     else
-      {:error, changeset}
+      {:error, store_changeset}
     end
+  end
+
+  defp insert_and_build_user_account(account_params, user_params, tenant) do
+    with {:ok, %Account{} = account} <- Accounts.create_account(account_params, tenant),
+        {:ok, %User{} = _user} <- Users.create_user(account, user_params, tenant ) do
+          {:ok, Accounts.get_user_account(account.id, tenant)}
+        end
   end
 
 end
