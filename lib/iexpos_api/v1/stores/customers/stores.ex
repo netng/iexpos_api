@@ -8,7 +8,7 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
   alias IexposApi.Repo
   alias IexposApi.V1.Stores.Customers.Store
 
-  alias IexposApi.V1.Services.TenantServices
+  alias IexposApi.V1.Helper.TenantActions
 
   @doc """
   Creates a store (we call it as tenant).
@@ -27,10 +27,19 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
 
     if changeset.valid? do
       codename = Ecto.Changeset.get_field(changeset, :codename)
-      Repo.transaction(fn ->
-        TenantServices.create_tenant_database_schema(codename)
-        Repo.insert!(changeset)
+
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:create_tenant, fn _, _ ->
+        TenantActions.create_tenant_database_schema(codename)
       end)
+      |> Ecto.Multi.insert(:insert_store, changeset)
+      |> Repo.transaction()
+      |> case do
+        {:ok, %{create_tenant: _codename, insert_store: changeset}} ->
+          {:ok, changeset}
+        {:error, :insert_store, changeset, _} ->
+          {:error, changeset}
+      end
     else
       {:error, changeset}
     end

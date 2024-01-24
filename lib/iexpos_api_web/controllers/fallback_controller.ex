@@ -14,11 +14,21 @@ defmodule IexposApiWeb.FallbackController do
     |> render(:error, changeset: changeset)
   end
 
+
+
   # This clause is an example of how to handle resources that cannot be found.
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
     |> put_view(html: IexposApiWeb.ErrorHTML, json: IexposApiWeb.ErrorJSON)
     |> render(:"404")
+  end
+
+  def call(conn, {:error, changeset}) do
+    IO.inspect(changeset, label: "CHANGESET")
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: IexposApiWeb.ChangesetJSON)
+    |> render(:error, changeset: changeset)
   end
 end

@@ -1,4 +1,4 @@
-defmodule IexposApi.V1.Services.TenantServices do
+defmodule IexposApi.V1.Helper.TenantActions do
   @moduledoc """
   Utilities that help with managing tenant's prefixed databases.
   """
@@ -39,6 +39,7 @@ defmodule IexposApi.V1.Services.TenantServices do
 
     IexposApi.Repo.stop(1000)
     IexposApi.Repo.put_dynamic_repo(IexposApi.Repo)
+    {:ok, tenant}
   end
 
   def tenant_migrations_path(repo) do
