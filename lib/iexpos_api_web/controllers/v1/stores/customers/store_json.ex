@@ -1,7 +1,7 @@
 defmodule IexposApiWeb.V1.Stores.Customers.StoreJSON do
-
-  def store(%{store: store}) do
+  def store(%{store: store, message: message}) do
     %{
+      message: message.message,
       data: %{
         id: store.id,
         name: store.name,
@@ -10,5 +10,4 @@ defmodule IexposApiWeb.V1.Stores.Customers.StoreJSON do
       }
     }
   end
-
 end

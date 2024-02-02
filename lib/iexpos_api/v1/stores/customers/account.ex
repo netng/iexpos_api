@@ -21,9 +21,11 @@ defmodule IexposApi.V1.Stores.Customers.Account do
     |> cast(attrs, [:email, :username, :hash_password])
     |> validate_required([:email, :username, :hash_password])
     |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "Must have the @ sign and no spaces")
+    |> validate_format(:username, ~r/^[a-zA-Z0-9]+$/,
+      message: "Only letters are allowed, no special characters and spaces"
+    )
     |> validate_length(:username, max: 100)
     |> validate_length(:email, max: 160)
     |> unique_constraint([:email, :username])
   end
-
 end

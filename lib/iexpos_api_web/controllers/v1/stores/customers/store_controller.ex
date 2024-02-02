@@ -7,12 +7,12 @@ defmodule IexposApiWeb.V1.Stores.Customers.StoreController do
   action_fallback IexposApiWeb.FallbackController
 
   def create(conn, %{"store" => store_params, "account" => account_params, "user" => user_params}) do
-    with {:ok, %Store{} = store} <- Stores.create_store(store_params, account_params, user_params) do
+    with {:ok, %Store{} = store, message} <-
+           Stores.create_store(store_params, account_params, user_params) do
       # send email confirmation
       conn
       |> put_status(:ok)
-      |> render(:store, %{store: store})
+      |> render(:store, %{store: store, message: message})
     end
   end
-
 end

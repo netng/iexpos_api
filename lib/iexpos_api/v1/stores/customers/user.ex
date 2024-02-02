@@ -21,10 +21,12 @@ defmodule IexposApi.V1.Stores.Customers.User do
     user
     |> cast(attrs, [:account_id, :fullname, :gender, :phone_number, :address])
     |> validate_required([:account_id, :phone_number])
+    |> validate_format(:phone_number, ~r/^[0-9]+$/,
+      message: "Only numbers are allowed, no special characters and spaces"
+    )
     |> validate_length(:fullname, max: 100)
     |> validate_length(:phone_number, max: 25)
     |> validate_length(:address, max: 500)
     |> unique_constraint([:account_id])
   end
-
 end

@@ -6,9 +6,11 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
   import Ecto.Query, warn: false
 
   alias IexposApi.V1.Stores.Customers.{
-    Account, Accounts,
+    Account,
+    Accounts,
     Store,
-    User, Users
+    User,
+    Users
   }
 
   alias IexposApi.Repo
@@ -35,16 +37,16 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
 
       Ecto.Multi.new()
       |> Ecto.Multi.run(:create_tenant, fn _, _ ->
-          TenantActions.create_tenant_database_schema(codename)
+        TenantActions.create_tenant_database_schema(codename)
       end)
       |> Ecto.Multi.insert(:insert_store, store_changeset)
-      |> Ecto.Multi.run(:insert_and_build_user_account, fn _,_ ->
-          insert_and_build_user_account(account, user, tenant)
+      |> Ecto.Multi.run(:insert_and_build_user_account, fn _, _ ->
+        insert_and_build_user_account(account, user, tenant)
       end)
       |> Repo.transaction()
       |> case do
         {:ok, %{create_tenant: _codename, insert_store: changeset}} ->
-          {:ok, changeset}
+          {:ok, changeset, %{message: "pendaftaran akun berhasil"}}
 
         {:error, :insert_store, changeset, _} ->
           {:error, changeset}
@@ -62,9 +64,8 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
 
   defp insert_and_build_user_account(account_params, user_params, tenant) do
     with {:ok, %Account{} = account} <- Accounts.create_account(account_params, tenant),
-        {:ok, %User{} = _user} <- Users.create_user(account, user_params, tenant ) do
-          {:ok, Accounts.get_user_account(account.id, tenant)}
-        end
+         {:ok, %User{} = _user} <- Users.create_user(account, user_params, tenant) do
+      {:ok, Accounts.get_user_account(account.id, tenant)}
+    end
   end
-
 end
