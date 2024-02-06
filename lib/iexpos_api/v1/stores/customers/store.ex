@@ -19,7 +19,7 @@ defmodule IexposApi.V1.Stores.Customers.Store do
   def changeset(store, attrs) do
     store
     |> cast(attrs, [:name, :codename, :address])
-    |> validate_required([:name, :codename, :address])
+    |> validate_required([:name, :codename])
     |> validate_format(:codename, ~r/^[a-zA-Z0-9]+$/,
       message: "Only letters are allowed, no special characters and spaces"
     )
@@ -29,6 +29,8 @@ defmodule IexposApi.V1.Stores.Customers.Store do
     # |> validate_length(:email, max: 160)
     # |> validate_length(:address, max: 500)
     # |> validate_length(:phone_number, max: 25)
-    |> unique_constraint([:codename])
+    |> unique_constraint(:codename,
+      message: "ID toko sudah terdaftar. Silakan gunakan nama lain. "
+    )
   end
 end
