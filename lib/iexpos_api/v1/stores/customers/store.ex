@@ -21,7 +21,7 @@ defmodule IexposApi.V1.Stores.Customers.Store do
     |> cast(attrs, [:name, :codename, :address])
     |> validate_required([:name, :codename])
     |> validate_format(:codename, ~r/^[a-zA-Z0-9]+$/,
-      message: "Only letters are allowed, no special characters and spaces"
+      message: "Hanya huruf, angka dan tanpa spasi yang diizinkan."
     )
     # |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "Must have the @ sign and no spaces")
     |> validate_length(:name, max: 100)

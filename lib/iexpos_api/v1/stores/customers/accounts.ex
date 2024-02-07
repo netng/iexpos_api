@@ -39,10 +39,10 @@ defmodule IexposApi.V1.Stores.Customers.Accounts do
 
   ## Examples
 
-    iex> get_account_by_email(test@gmail.com)
+    iex> get_account_by_email(test@gmail.com, tenant_name)
     %Account{}
 
-    iex> get_account_by_email(no_account@gmail.com)
+    iex> get_account_by_email(no_account@gmail.com, tenant_name)
     nil
   """
   def get_account_by_email(email, tenant) do

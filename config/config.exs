@@ -26,6 +26,10 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :iexpos_api, IexposApiWeb.Auth.Guardian,
+  issuer: "iexpos_api",
+  secret_key: "fqvqYdMX/7VSbif4CLS6sRRILU29eIse8sYF6YV4DJXgIa6udB3T8eYNUpmqMIgp"
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 

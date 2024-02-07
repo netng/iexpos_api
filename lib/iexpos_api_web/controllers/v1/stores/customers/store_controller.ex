@@ -12,7 +12,7 @@ defmodule IexposApiWeb.V1.Stores.Customers.StoreController do
       # send email confirmation
       conn
       |> put_status(:ok)
-      |> render(:store, %{store: store, message: message})
+      |> render(:store, %{store: store, message: message.message})
     end
   end
 end

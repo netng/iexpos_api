@@ -1,12 +1,12 @@
 defmodule IexposApiWeb.V1.Stores.Customers.AccountJSON do
-
-  def account(%{account: account}) do
+  def account_token(%{account: account, token: token, message: message}) do
     %{
+      message: message,
       data: %{
+        id: account.id,
         email: account.email,
-        username: account.username
+        token: token
       }
     }
   end
-
 end
