@@ -18,7 +18,9 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
 
   @doc """
   Creates a store (we call it as tenant).
-  Will create a new schema with prefix tenant_[code]
+  Will create a new schema with prefix tenant_[code].
+
+  This action is transactional process, so if a transaction fail, we rolled back it.
 
   ## Examples
 
@@ -60,6 +62,18 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
     else
       {:error, store_changeset}
     end
+  end
+
+  def is_exists?(codename) do
+    Store
+    |> where(codename: ^codename)
+    |> Repo.exists?()
+  end
+
+  def get_store_by_codename(codename) do
+    Store
+    |> where(codename: ^codename)
+    |> Repo.one()
   end
 
   defp insert_and_build_user_account(account_params, user_params, tenant) do

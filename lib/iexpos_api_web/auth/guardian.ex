@@ -52,13 +52,13 @@ defmodule IexposApiWeb.Auth.Guardian do
     end
   end
 
-  # def authenticate(token) do
-  #   with {:ok, claims} <- decode_and_verify(token),
-  #        {:ok, account} <- resource_from_claims(claims),
-  #        {:ok, _old, {token, _claims}} <- refresh(token) do
-  #     {:ok, account, token}
-  #   end
-  # end
+  def authenticate(token) do
+    with {:ok, claims} <- decode_and_verify(token),
+         {:ok, account} <- resource_from_claims(claims),
+         {:ok, _old, {token, _claims}} <- refresh(token) do
+      {:ok, account, token, %{message: "success"}}
+    end
+  end
 
   defp validate_password(password, hash_password) do
     Bcrypt.verify_pass(password, hash_password)

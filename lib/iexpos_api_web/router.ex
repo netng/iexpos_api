@@ -22,6 +22,11 @@ defmodule IexposApiWeb.Router do
     plug :fetch_session
   end
 
+  pipeline :auth do
+    plug IexposApiWeb.Auth.Pipeline
+    plug IexposApiWeb.Auth.SetTenant
+  end
+
   scope "/api", IexposApiWeb do
     pipe_through :api
   end
@@ -31,5 +36,10 @@ defmodule IexposApiWeb.Router do
 
     post "/sign-up", StoreController, :create
     post "/sign-in", AccountController, :sign_in
+  end
+
+  scope "/api/v1/stores/customers", IexposApiWeb.V1.Stores.Customers do
+    pipe_through [:api, :auth]
+    get "/refresh_session", AccountController, :refresh_session
   end
 end
