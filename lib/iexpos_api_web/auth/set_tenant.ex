@@ -10,13 +10,11 @@ defmodule IexposApiWeb.Auth.SetTenant do
   end
 
   def call(conn, _options) do
-    IO.inspect(conn, label: "CONN SET TENANT")
-
     if conn.assigns[:codename] do
       conn
     else
       codename = get_session(conn, :codename)
-      IO.inspect(codename, label: "CODENAME FROM PLUG")
+
       if codename == nil, do: raise(ErrorResponses.Unauthorized)
       store = Stores.get_store_by_codename(codename)
 

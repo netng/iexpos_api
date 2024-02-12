@@ -38,8 +38,9 @@ defmodule IexposApiWeb.Auth.Guardian do
 
     with %Account{} = account <- Accounts.get_account_by_email(email, tenant),
          true <- validate_password(password, account.hash_password),
-         {:ok, %Account{} = account, token} <- create_token(account, tenant) do
-      {:ok, account, token, %{message: "success"}}
+         {:ok, %Account{} = account, token, %{"exp" => expiration_time}} <-
+           create_token(account, tenant) do
+      {:ok, account, token, expiration_time, %{message: "success"}}
     else
       nil ->
         {:error, :unauthorized}
@@ -65,7 +66,9 @@ defmodule IexposApiWeb.Auth.Guardian do
   end
 
   defp create_token(account, tenant) do
-    {:ok, token, _claims} = encode_and_sign(account, %{codename: tenant})
-    {:ok, account, token}
+    {:ok, token, claims} =
+      encode_and_sign(account, %{codename: tenant}, token_type: "access", ttl: {15, :minute})
+
+    {:ok, account, token, claims}
   end
 end

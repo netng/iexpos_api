@@ -9,14 +9,17 @@ defmodule IexposApiWeb.V1.Stores.Customers.AccountController do
 
   def sign_in(conn, %{"email" => email, "hash_password" => hash_password, "codename" => codename}) do
     with {:is_store_exists, true} <- {:is_store_exists, Stores.is_exists?(codename)},
-         {:ok, %Account{} = account, token, message} <-
+         {:ok, %Account{} = account, token, expiration_time, message} <-
            Guardian.authenticate(email, hash_password, codename) do
       conn
       |> Plug.Conn.put_session(:account_id, account.id)
       |> Plug.Conn.put_session(:codename, codename)
       |> put_status(:ok)
-      |> IO.inspect(label: "CONNNN Sign In:")
-      |> render(:account_token, %{account: account, token: token, message: message.message})
+      |> render(:account_token, %{
+        token: token,
+        expiration_time: expiration_time,
+        message: message.message
+      })
     else
       {:is_store_exists, false} ->
         raise ErrorResponses.NotFound, message: "ID toko tidak ditemukan"
