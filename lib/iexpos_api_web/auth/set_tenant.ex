@@ -1,5 +1,6 @@
 defmodule IexposApiWeb.Auth.SetTenant do
   import Plug.Conn
+  alias IexposApiWeb.Auth.Guardian
   alias IexposApi.V1.Stores.Customers.Stores
   alias IexposApiWeb.Auth.ErrorResponses
 
@@ -13,7 +14,7 @@ defmodule IexposApiWeb.Auth.SetTenant do
     if conn.assigns[:codename] do
       conn
     else
-      codename = get_session(conn, :codename)
+      %{"codename" => codename} = Guardian.Plug.current_claims(conn)
 
       if codename == nil, do: raise(ErrorResponses.Unauthorized)
       store = Stores.get_store_by_codename(codename)

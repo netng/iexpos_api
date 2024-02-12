@@ -40,6 +40,6 @@ defmodule IexposApiWeb.Router do
 
   scope "/api/v1/stores/customers", IexposApiWeb.V1.Stores.Customers do
     pipe_through [:api, :auth]
-    get "/refresh_session", AccountController, :refresh_session
+    get "/refresh-session", AccountController, :refresh_session
   end
 end

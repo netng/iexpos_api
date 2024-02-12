@@ -56,8 +56,9 @@ defmodule IexposApiWeb.Auth.Guardian do
   def authenticate(token) do
     with {:ok, claims} <- decode_and_verify(token),
          {:ok, account} <- resource_from_claims(claims),
-         {:ok, _old, {token, _claims}} <- refresh(token) do
-      {:ok, account, token, %{message: "success"}}
+         {:ok, _old, {token, %{"exp" => expiration_time}}} <-
+           refresh(token, token_type: "access", ttl: {1, :minute}) do
+      {:ok, account, token, expiration_time, %{message: "success"}}
     end
   end
 
@@ -67,7 +68,7 @@ defmodule IexposApiWeb.Auth.Guardian do
 
   defp create_token(account, tenant) do
     {:ok, token, claims} =
-      encode_and_sign(account, %{codename: tenant}, token_type: "access", ttl: {15, :minute})
+      encode_and_sign(account, %{codename: tenant}, token_type: "access", ttl: {1, :minute})
 
     {:ok, account, token, claims}
   end
