@@ -1,6 +1,7 @@
 defmodule IexposApiWeb.V1.Stores.Customers.AccountController do
   use IexposApiWeb, :controller
 
+  alias IexposApi.V1.Stores.Customers.Store
   alias IexposApi.V1.Stores.Customers.{Stores, Account}
   alias IexposApiWeb.Auth.ErrorResponses
   alias IexposApiWeb.Auth.Guardian
@@ -12,10 +13,10 @@ defmodule IexposApiWeb.V1.Stores.Customers.AccountController do
          {:ok, %Account{} = account, token, expiration_time, message} <-
            Guardian.authenticate(email, hash_password, codename) do
       conn
-      |> Plug.Conn.put_session(:account_id, account.id)
-      |> Plug.Conn.put_session(:codename, codename)
+      |> put_session(:account_id, account.id)
+      |> put_session(:codename, codename)
+      |> put_session(:guardian_default_token, token)
       |> put_status(:ok)
-      |> IO.inspect(label: "SIGN IN CONN:")
       |> render(:account_token, %{
         token: token,
         expiration_time: expiration_time,
@@ -32,13 +33,14 @@ defmodule IexposApiWeb.V1.Stores.Customers.AccountController do
 
   def refresh_session(conn, %{}) do
     old_token = Guardian.Plug.current_token(conn)
+    %Store{codename: codename} = conn.assigns[:store]
 
     with {:ok, account, new_token, expiration_time, message} <- Guardian.authenticate(old_token) do
       conn
       |> put_session(:account_id, account.id)
-      |> put_session(:codename, conn.assigns[:codename])
+      |> put_session(:codename, codename)
+      |> put_session(:guardian_default_token, new_token)
       |> put_status(:ok)
-      |> IO.inspect(label: "REFRESH SESSION CONN:")
       |> render(:account_token, %{
         account: account,
         token: new_token,

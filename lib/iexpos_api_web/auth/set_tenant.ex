@@ -14,8 +14,7 @@ defmodule IexposApiWeb.Auth.SetTenant do
     if conn.assigns[:codename] do
       conn
     else
-      %{"codename" => codename} = Guardian.Plug.current_claims(conn)
-
+      codename = get_session(conn, :codename)
       if codename == nil, do: raise(ErrorResponses.Unauthorized)
       store = Stores.get_store_by_codename(codename)
 
