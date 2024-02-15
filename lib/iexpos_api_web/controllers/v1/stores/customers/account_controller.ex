@@ -52,4 +52,22 @@ defmodule IexposApiWeb.V1.Stores.Customers.AccountController do
         raise ErrorResponses.NotFound
     end
   end
+
+  def is_connected(conn, %{}) do
+    old_token = Guardian.Plug.current_token(conn)
+    %Store{codename: codename} = conn.assigns[:store]
+
+    with {:ok, account, new_token, expiration_time, _message} <-
+           Guardian.authenticate(old_token) do
+      conn
+      |> put_status(:ok)
+      |> put_session(:account_id, account.id)
+      |> put_session(:codename, codename)
+      |> put_session(:guardian_default_token, new_token)
+      |> render(:account_is_connected, %{connected: true})
+    else
+      {:error, _reason} ->
+        raise ErrorResponses.NotFound
+    end
+  end
 end

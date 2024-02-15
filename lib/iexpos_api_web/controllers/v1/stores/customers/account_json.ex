@@ -8,4 +8,8 @@ defmodule IexposApiWeb.V1.Stores.Customers.AccountJSON do
       }
     }
   end
+
+  def account_is_connected(%{connected: connected}) do
+    %{connected: connected}
+  end
 end
