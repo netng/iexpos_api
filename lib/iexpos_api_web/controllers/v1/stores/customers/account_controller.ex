@@ -15,7 +15,6 @@ defmodule IexposApiWeb.V1.Stores.Customers.AccountController do
       conn
       |> put_session(:account_id, account.id)
       |> put_session(:codename, codename)
-      |> put_session(:guardian_default_token, token)
       |> put_status(:ok)
       |> render(:account_token, %{
         token: token,
@@ -35,11 +34,11 @@ defmodule IexposApiWeb.V1.Stores.Customers.AccountController do
     old_token = Guardian.Plug.current_token(conn)
     %Store{codename: codename} = conn.assigns[:store]
 
-    with {:ok, account, new_token, expiration_time, message} <- Guardian.authenticate(old_token) do
+    with {:ok, account, new_token, expiration_time, message} <-
+           Guardian.authenticate(old_token) do
       conn
       |> put_session(:account_id, account.id)
       |> put_session(:codename, codename)
-      |> put_session(:guardian_default_token, new_token)
       |> put_status(:ok)
       |> render(:account_token, %{
         account: account,
@@ -53,21 +52,35 @@ defmodule IexposApiWeb.V1.Stores.Customers.AccountController do
     end
   end
 
-  def is_connected(conn, %{}) do
-    old_token = Guardian.Plug.current_token(conn)
-    %Store{codename: codename} = conn.assigns[:store]
+  # def is_connected(conn, %{}) do
+  #   IO.inspect(conn, label: "is connected conn: ")
+  #   old_token = Guardian.Plug.current_token(conn)
+  #   %Store{codename: codename} = conn.assigns[:store]
 
-    with {:ok, account, new_token, expiration_time, _message} <-
-           Guardian.authenticate(old_token) do
-      conn
-      |> put_status(:ok)
-      |> put_session(:account_id, account.id)
-      |> put_session(:codename, codename)
-      |> put_session(:guardian_default_token, new_token)
-      |> render(:account_is_connected, %{connected: true})
-    else
-      {:error, _reason} ->
-        raise ErrorResponses.NotFound
-    end
-  end
+  #   with {:ok, account, new_token, _expiration_time, _message} <-
+  #          Guardian.authenticate(old_token) do
+  #     conn
+  #     |> put_status(:ok)
+  #     |> put_session(:account_id, account.id)
+  #     |> put_session(:codename, codename)
+  #     |> put_session(:guardian_default_token, new_token)
+  #     |> render(:account_is_connected, %{connected: true})
+  #   else
+  #     {:error, _reason} ->
+  #       raise ErrorResponses.NotFound
+  #   end
+  # end
+
+  # defp get_user_agent(conn) do
+  #   req_headers = Enum.into(conn.req_headers, %{})
+  #   %{"user-agent" => user_agent} = req_headers
+  #   user_agent
+  # end
+
+  # defp gen_random_string() do
+  #   :crypto.strong_rand_bytes(16)
+  #   |> Base.encode64()
+  #   |> String.replace("\n", "")
+  #   |> String.slice(0, 16)
+  # end
 end

@@ -8,8 +8,7 @@ defmodule IexposApiWeb.Endpoint do
     store: :cookie,
     key: "_iexpos_api_key",
     signing_salt: "oUYVfdjQ",
-    same_site: "Lax",
-    max_age: 60
+    same_site: "Lax"
   ]
 
   plug Corsica,

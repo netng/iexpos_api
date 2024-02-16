@@ -20,7 +20,6 @@ defmodule IexposApiWeb.Auth.SetTenant do
 
       cond do
         codename && store ->
-          assign(conn, :codename, codename)
           assign(conn, :store, store)
 
         true ->

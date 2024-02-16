@@ -27,6 +27,10 @@ defmodule IexposApiWeb.Router do
     plug IexposApiWeb.Auth.SetTenant
   end
 
+  pipeline :check_auth do
+    plug IexposApiWeb.Auth.CheckAuth
+  end
+
   scope "/api", IexposApiWeb do
     pipe_through :api
   end
@@ -40,6 +44,7 @@ defmodule IexposApiWeb.Router do
 
   scope "/api/v1/stores/customers", IexposApiWeb.V1.Stores.Customers do
     pipe_through [:api, :auth]
+
     get "/refresh-session", AccountController, :refresh_session
     get "/connected", AccountController, :is_connected
   end
