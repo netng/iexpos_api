@@ -15,4 +15,17 @@ defmodule IexposApiWeb.V1.Stores.Customers.StoreController do
       |> render(:store, %{store: store, message: message.message})
     end
   end
+
+  def whois(conn, %{"codename" => codename}) do
+    with true <- Stores.is_exists?(codename) do
+      conn
+      |> put_status(:ok)
+      |> render(:store, is_exists: true)
+    else
+      false ->
+        conn
+        |> put_status(:ok)
+        |> render(:store, %{is_exists: false})
+    end
+  end
 end

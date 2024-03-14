@@ -40,6 +40,7 @@ defmodule IexposApiWeb.Router do
 
     post "/sign-up", StoreController, :create
     post "/sign-in", AccountController, :sign_in
+    post "/whois", StoreController, :whois
   end
 
   scope "/api/v1/stores/customers", IexposApiWeb.V1.Stores.Customers do

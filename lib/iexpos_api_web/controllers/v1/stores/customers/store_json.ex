@@ -10,4 +10,10 @@ defmodule IexposApiWeb.V1.Stores.Customers.StoreJSON do
       }
     }
   end
+
+  def store(%{is_exists: is_exists}) do
+    %{
+      is_exists: is_exists
+    }
+  end
 end

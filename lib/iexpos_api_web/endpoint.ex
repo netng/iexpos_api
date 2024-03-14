@@ -13,7 +13,7 @@ defmodule IexposApiWeb.Endpoint do
 
   plug Corsica,
     origins: [
-      "http://localhost:5173"
+      "http://localhost:4200"
     ],
     allow_headers: ["accept", "content-type", "authorization"],
     allow_credentials: true,
