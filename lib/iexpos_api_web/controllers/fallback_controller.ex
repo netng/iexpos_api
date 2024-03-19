@@ -11,7 +11,7 @@ defmodule IexposApiWeb.FallbackController do
     conn
     |> put_status(:unprocessable_entity)
     |> put_view(json: IexposApiWeb.ChangesetJSON)
-    |> render(:error, changeset: changeset)
+    |> render(:error, %{changeset: changeset, status: :unprocessable_entity})
   end
 
   # This clause is an example of how to handle resources that cannot be found.

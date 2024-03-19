@@ -12,10 +12,9 @@ defmodule IexposApiWeb.Endpoint do
   ]
 
   plug Corsica,
-    origins: [
-      "http://localhost:4200"
-    ],
-    allow_headers: ["accept", "content-type", "authorization"],
+    origins: "*",
+    methods: ["GET", "POST", "PUT", "OPTIONS", "DELETE"],
+    allow_headers: ["accept", "content-type", "authorization", "Cache-Control", "Pragma"],
     allow_credentials: true,
     log: [rejected: :error, invalid: :warn, accepted: :debug]
 

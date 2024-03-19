@@ -66,7 +66,7 @@ defmodule IexposApi.V1.Stores.Customers.Stores do
 
   def is_exists?(codename) do
     Store
-    |> where(codename: ^codename)
+    |> where(codename: ^String.downcase(codename))
     |> Repo.exists?()
   end
 

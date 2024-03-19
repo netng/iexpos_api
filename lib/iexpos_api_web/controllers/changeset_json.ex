@@ -2,10 +2,10 @@ defmodule IexposApiWeb.ChangesetJSON do
   @doc """
   Renders changeset errors.
   """
-  def error(%{changeset: changeset}) do
+  def error(%{changeset: changeset, status: status}) do
     # When encoded, the changeset returns its errors
     # as a JSON object. So we just pass it forward.
-    %{errors: Ecto.Changeset.traverse_errors(changeset, &translate_error/1)}
+    %{status: status, errors: Ecto.Changeset.traverse_errors(changeset, &translate_error/1)}
   end
 
   defp translate_error({msg, opts}) do
