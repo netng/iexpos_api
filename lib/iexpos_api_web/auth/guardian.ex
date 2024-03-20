@@ -63,12 +63,6 @@ defmodule IexposApiWeb.Auth.Guardian do
     end
   end
 
-  def custom_decode_and_verify(token) do
-    with {:ok, claims} <- decode_and_verify(token) do
-      IO.inspect(claims, label: "CLAIMSSSSS")
-    end
-  end
-
   defp validate_password(password, hash_password) do
     Bcrypt.verify_pass(password, hash_password)
   end
