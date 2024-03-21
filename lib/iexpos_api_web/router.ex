@@ -41,7 +41,6 @@ defmodule IexposApiWeb.Router do
     post "/sign-up", StoreController, :create
     post "/sign-in", AccountController, :sign_in
     get "/whois/:codename", StoreController, :whois
-
   end
 
   scope "/api/v1/stores/customers", IexposApiWeb.V1.Stores.Customers do
@@ -50,7 +49,7 @@ defmodule IexposApiWeb.Router do
     get "/refresh-session", AccountController, :refresh_session
     get "/connected", AccountController, :is_connected
 
-    get "/suppliers/:codename", SupplierController, :index
+    get "/suppliers", SupplierController, :index
     post "/suppliers", SupplierController, :create
   end
 end

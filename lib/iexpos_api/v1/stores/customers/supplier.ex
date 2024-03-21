@@ -17,9 +17,17 @@ defmodule IexposApi.V1.Stores.Customers.Supplier do
   def changeset(supplier, attrs) do
     supplier
     |> cast(attrs, [:name, :phone_number, :email, :address])
-    |> validate_required([:name])
-    |> validate_length(:name, min: 2)
-    |> validate_length(:name, max: 50)
-    |> unique_constraint([:name])
+    |> validate_required([:name], message: "Nama supplier wajib diisi.")
+    |> validate_length(:name,
+      min: 2,
+      max: 50,
+      message: "Nama supplier minimal 2 karakter dan maksimal 50 karakter."
+    )
+    |> validate_length(:address,
+      min: 5,
+      max: 150,
+      message: "Alamat supplier minimal 5 karakter dan maksimal 150 karakter."
+    )
+    |> unique_constraint([:name], message: "Nama supplier sudah ada yang punya")
   end
 end

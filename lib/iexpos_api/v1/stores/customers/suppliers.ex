@@ -14,7 +14,9 @@ defmodule IexposApi.V1.Stores.Customers.Suppliers do
   List all suppliers
   """
   def list_suppliers(codename) do
-    Repo.all(Supplier, prefix: @schema_prefix <> String.downcase(codename))
+    Repo.all(Supplier, prefix: codename)
+  rescue
+    Postgrex.Error -> {:error, :tenant_not_found}
   end
 
   @doc """
@@ -28,10 +30,10 @@ defmodule IexposApi.V1.Stores.Customers.Suppliers do
       iex> create_supplier(%{field: bad_value}, "tenant_xxx")
       {:error, %Ecto.Changeset{}}
   """
-  def create_supplier(attrs \\ %{}, tenant) do
+  def create_supplier(attrs \\ %{}, codename) do
     %Supplier{}
     |> Supplier.changeset(attrs)
-    |> Repo.insert(prefix: @schema_prefix <> String.downcase(tenant))
+    |> Repo.insert(prefix: codename)
   end
 
   @doc """

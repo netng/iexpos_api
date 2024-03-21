@@ -5,15 +5,19 @@ defmodule IexposApiWeb.V1.Stores.Customers.SupplierController do
 
   action_fallback IexposApiWeb.FallbackController
 
-  def index(conn, %{"codename" => codename}) do
-    suppliers = Suppliers.list_suppliers(codename)
+  def index(conn, _params) do
+    suppliers = Suppliers.list_suppliers(current_tenant(conn))
     render(conn, :index, %{suppliers: suppliers, status: "ok"})
   end
 
-  def create(conn, %{"supplier" => supplier_params, "codename" => codename}) do
-    current_token = Guardian.Plug.current_token(conn)
-    with {:ok, %Supplier{} = supplier} <- Suppliers.create_supplier(supplier_params, codename) do
+  def create(conn, %{"supplier" => supplier_params}) do
+    with {:ok, %Supplier{} = supplier} <-
+           Suppliers.create_supplier(supplier_params, current_tenant(conn)) do
       render(conn, :show, %{supplier: supplier, status: "ok"})
     end
+  end
+
+  defp current_tenant(conn) do
+    Guardian.Plug.current_claims(conn)["codename"]
   end
 end
