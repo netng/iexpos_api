@@ -58,7 +58,6 @@ defmodule IexposApiWeb.Auth.Guardian do
          {:ok, account} <- resource_from_claims(claims),
          {:ok, _old, {token, %{"exp" => expiration_time}}} <-
            refresh(token, ttl: {60, :minute}) do
-      IO.inspect(token, label: "new token")
       {:ok, account, token, expiration_time, %{message: "success"}}
     end
   end

@@ -55,6 +55,19 @@ defmodule IexposApi.V1.Stores.Customers.Suppliers do
     |> Repo.one(prefix: tenant)
   end
 
+  def fetch_supplier(id, tenant) do
+    with {:supplier, %Supplier{} = supplier} <-
+           {:supplier, Repo.get(Supplier, id, prefix: tenant)} do
+      {:ok, supplier}
+    else
+      {:supplier, nil} ->
+        {:error, :not_found}
+    end
+  rescue
+    Postgrex.Error -> {:error, :tenant_not_found}
+    Ecto.Query.CastError -> {:error, :binary_id_cast_error}
+  end
+
   @doc """
   Gets a single supplier.
 

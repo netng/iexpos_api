@@ -13,6 +13,14 @@ defmodule IexposApiWeb.V1.Stores.Customers.SupplierController do
   def create(conn, %{"supplier" => supplier_params}) do
     with {:ok, %Supplier{} = supplier} <-
            Suppliers.create_supplier(supplier_params, current_tenant(conn)) do
+      conn
+      |> put_status(:created)
+      |> render(:show, %{supplier: supplier, status: "ok"})
+    end
+  end
+
+  def show(conn, %{"id" => id}) do
+    with {:ok, %Supplier{} = supplier} <- Suppliers.fetch_supplier(id, current_tenant(conn)) do
       render(conn, :show, %{supplier: supplier, status: "ok"})
     end
   end

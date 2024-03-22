@@ -1,21 +1,21 @@
 defmodule IexposApiWeb.Router do
   use IexposApiWeb, :router
-  use Plug.ErrorHandler
+  # use Plug.ErrorHandler
 
-  @impl Plug.ErrorHandler
-  def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
-    conn |> json(%{errors: message}) |> halt()
-  end
+  # @impl Plug.ErrorHandler
+  # def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
+  #   conn |> json(%{errors: message}) |> halt()
+  # end
 
-  @impl Plug.ErrorHandler
-  def handle_errors(conn, %{reason: %Phoenix.ActionClauseError{}}) do
-    conn |> json(%{errors: "invalid request body"})
-  end
+  # @impl Plug.ErrorHandler
+  # def handle_errors(conn, %{reason: %Phoenix.ActionClauseError{}}) do
+  #   conn |> json(%{errors: "invalid request body"})
+  # end
 
-  @impl Plug.ErrorHandler
-  def handle_errors(conn, %{reason: %{message: message}}) do
-    conn |> json(%{errors: message}) |> halt()
-  end
+  # @impl Plug.ErrorHandler
+  # def handle_errors(conn, %{reason: %{message: message}}) do
+  #   conn |> json(%{errors: message}) |> halt()
+  # end
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -24,7 +24,7 @@ defmodule IexposApiWeb.Router do
 
   pipeline :auth do
     plug IexposApiWeb.Auth.Pipeline
-    plug IexposApiWeb.Auth.SetTenant
+    # plug IexposApiWeb.Auth.SetTenant
   end
 
   pipeline :check_auth do
@@ -49,7 +49,10 @@ defmodule IexposApiWeb.Router do
     get "/refresh-session", AccountController, :refresh_session
     get "/connected", AccountController, :is_connected
 
-    get "/suppliers", SupplierController, :index
-    post "/suppliers", SupplierController, :create
+    scope "/suppliers" do
+      get "/", SupplierController, :index
+      get "/:id", SupplierController, :show
+      post "/", SupplierController, :create
+    end
   end
 end

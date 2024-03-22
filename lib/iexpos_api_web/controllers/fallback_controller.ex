@@ -22,6 +22,13 @@ defmodule IexposApiWeb.FallbackController do
     |> render(:"404")
   end
 
+  def call(conn, {:error, :binary_id_cast_error}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(json: IexposApiWeb.ErrorJSON)
+    |> render(:"4004")
+  end
+
   def call(conn, {:error, changeset}) do
     IO.inspect(changeset, label: "CHANGESET")
 
